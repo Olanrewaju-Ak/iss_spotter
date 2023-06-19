@@ -20,6 +20,31 @@ const fetchMyIP = function (callback) {
   });
 };
 
+const fetchCoordsByIP = function (ip, callback) {
+  const url = `http://ipwho.is/${ip}`;
+  request(url, (error, response, body) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+
+    //parse the returned body so we can check its information
+    const parsedBody = JSON.parse(body);
+    //check if 'success' is true or not
+    if (!parsedBody.success) {
+      const message = `success status was ${parsedBody.success}. server message says ${parsedBody.message} when fetching for IP ${parsedBody.ip}`;
+      callback(Error(message), null);
+      return;
+    }
+    //creating a data object
+    data = {};
+    data.latitude = parsedBody.latitude;
+    data.longitude = parsedBody.longitude;
+    callback(null, data);
+  });
+};
+
 module.exports = {
-  fetchMyIP
+  fetchMyIP,
+  fetchCoordsByIP
 };
