@@ -38,10 +38,10 @@ const fetchCoordsByIP = function(ip, callback) {
       return;
     }
     //creating a data object
-    let data = {};
-    data.latitude = parsedBody.latitude;
-    data.longitude = parsedBody.longitude;
-    callback(null, data);
+    let coords = {};
+    coords.latitude = parsedBody.latitude;
+    coords.longitude = parsedBody.longitude;
+    callback(null, coords);
   });
 };
 
@@ -65,8 +65,28 @@ const fetchISSFlyOverTimes = function(coords, callback) {
   });
 };
 
+const nextISSTimesForMyLocation = function(callback) {
+  //making the api request for getting Ip
+  fetchMyIP((error, ip) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    fetchCoordsByIP(ip, (error, coords) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      fetchISSFlyOverTimes(coords, (error, passTimes) => {
+        if (error) {
+          callback(error, null);
+        }
+        callback(null, passTimes);
+      });
+    });
+  });
+};
+
 module.exports = {
-  fetchMyIP,
-  fetchCoordsByIP,
-  fetchISSFlyOverTimes
+  nextISSTimesForMyLocation
 };
