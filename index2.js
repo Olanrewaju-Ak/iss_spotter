@@ -1,5 +1,7 @@
-const { fetchMyIp } = require("./iss_promised");
+const { nextISStimesForMyLocation } = require("./iss_promised");
 
-fetchMyIp().then((body) => {
-  console.log(body);
+nextISStimesForMyLocation().then((data) => {
+  for (const item of data) {
+    console.log("Next pass at " + new Date(item.risetime), "for " + item.duration + " seconds");
+  }
 });
